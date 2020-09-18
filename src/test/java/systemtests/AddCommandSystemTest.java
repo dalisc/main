@@ -38,6 +38,8 @@ import seedu.address.model.person.Name;
 import seedu.address.testutil.WorkerBuilder;
 import seedu.address.testutil.WorkerUtil;
 
+//@@author shaoyi1997-reused
+//Reused from SE-EDU Address Book Level 4
 public class AddCommandSystemTest extends AddressBookSystemTest {
 
     @Test
@@ -192,7 +194,7 @@ public class AddCommandSystemTest extends AddressBookSystemTest {
     private void assertCommandSuccess(String command, Worker toAdd) {
         Model expectedModel = getModel();
         expectedModel.addEntity(toAdd);
-        String expectedResultMessage = String.format(AddCommand.MESSAGE_SUCCESS, toAdd);
+        String expectedResultMessage = String.format(AddCommand.MESSAGE_SUCCESS, "worker", toAdd.getIdNum());
 
         assertCommandSuccess(command, expectedModel, expectedResultMessage);
     }
@@ -232,3 +234,4 @@ public class AddCommandSystemTest extends AddressBookSystemTest {
         assertStatusBarUnchanged();
     }
 }
+//@@author

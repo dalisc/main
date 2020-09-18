@@ -159,7 +159,7 @@ public class ParserUtil {
         return tagSet;
     }
 
-    //@@ author shaoyi1997
+    //@@author shaoyi1997
     /**
      * Parses {@code String date} into a {@code Date date}.
      *
@@ -171,10 +171,11 @@ public class ParserUtil {
             return null;
         }
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        format.setLenient(false);
         try {
             return format.parse(date);
         } catch (java.text.ParseException e) {
-            throw new ParseException("Wrong date format"); // todo: abstract out message
+            throw new ParseException(MESSAGE_INVALID_DATE);
         }
     }
 
@@ -243,7 +244,7 @@ public class ParserUtil {
             return Arrays.asList(new String[0]);
         }
         String trimmedOrgans = stringOfOrgans.trim();
-        String[] arrayOforgans = trimmedOrgans.split("\\s*,\\s*");
+        String[] arrayOforgans = trimmedOrgans.split(" ");
         return Arrays.asList(arrayOforgans);
     }
 
@@ -305,5 +306,5 @@ public class ParserUtil {
             throw new ParseException(Photo.MESSAGE_CONSTRAINTS);
         }
     }
-    //@@ author
+    //@@author
 }

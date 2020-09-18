@@ -1,6 +1,7 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.commons.core.Messages.MESSAGE_INVALD_FRIDE_ID_FORMAT;
 import static seedu.address.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.commons.core.Messages.MESSAGE_INVALID_ENTITY_DISPLAYED_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_BODY_DETAILS;
@@ -86,16 +87,9 @@ public class UpdateCommandParser implements Parser<UpdateCommand> {
         IdentificationNumber identificationNumber;
         UpdateEntityDescriptor updateEntityDescriptor;
 
-        if (idNum == null || idNum.isEmpty() || idNum.chars().anyMatch(Character::isLetter)
-                || Integer.parseInt(idNum) <= 0) {
-            throw new ParseException(MESSAGE_INVALID_ENTITY_DISPLAYED_INDEX + ". Please give a "
-                    + "positive non-zero number.");
-        }
-
         boolean arePrefixesPresent;
         switch (flag) {
         case "b":
-            identificationNumber = IdentificationNumber.customGenerateId("B", Integer.parseInt(idNum));
             arePrefixesPresent = arePrefixesPresent(argMultimap,
                     PREFIX_NAME,
                     PREFIX_SEX,
@@ -113,7 +107,6 @@ public class UpdateCommandParser implements Parser<UpdateCommand> {
                     PREFIX_BODY_DETAILS);
             break;
         case "w":
-            identificationNumber = IdentificationNumber.customGenerateId("W", Integer.parseInt(idNum));
             arePrefixesPresent = arePrefixesPresent(argMultimap,
                 PREFIX_PHONE_NUMBER,
                     PREFIX_SEX,
@@ -128,16 +121,24 @@ public class UpdateCommandParser implements Parser<UpdateCommand> {
 
         }
 
-        if (!arePrefixesPresent || identificationNumber == null || !argMultimap.getPreamble().isEmpty()) {
+        if (!arePrefixesPresent || !argMultimap.getPreamble().isEmpty()) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, UpdateCommand.MESSAGE_USAGE));
+        }
+
+        if (idNum == null || idNum.isEmpty() || idNum.chars().anyMatch(Character::isLetter)
+                || Integer.parseInt(idNum) <= 0) {
+            throw new ParseException(MESSAGE_INVALID_ENTITY_DISPLAYED_INDEX + ". Please give a "
+                    + "positive non-zero number.");
         }
 
         // Get input fields from arguments.
         switch(flag) {
         case "b":
+            identificationNumber = IdentificationNumber.customGenerateId("B", Integer.parseInt(idNum));
             updateEntityDescriptor = parseBodyFields(new UpdateBodyDescriptor(), argMultimap);
             return new UpdateCommand(identificationNumber, updateEntityDescriptor);
         case "w":
+            identificationNumber = IdentificationNumber.customGenerateId("W", Integer.parseInt(idNum));
             updateEntityDescriptor = parseWorkerFields(new UpdateWorkerDescriptor(), argMultimap);
             return new UpdateCommand(identificationNumber, updateEntityDescriptor);
         case "f":
@@ -193,9 +194,13 @@ public class UpdateCommandParser implements Parser<UpdateCommand> {
         }
         if (!argMultimap.getValue(PREFIX_FRIDGE_ID).orElse("").isEmpty()) {
             String idNum = argMultimap.getValue(PREFIX_FRIDGE_ID).orElse(null);
-            IdentificationNumber identificationNumber = IdentificationNumber
-                    .customGenerateId("F", Integer.parseInt(idNum));
-            bodyDescriptor.setFridgeId(identificationNumber);
+            try {
+                IdentificationNumber identificationNumber = IdentificationNumber
+                        .customGenerateId("F", Integer.parseInt(idNum));
+                bodyDescriptor.setFridgeId(identificationNumber);
+            } catch (NumberFormatException exp) {
+                throw new ParseException(MESSAGE_INVALD_FRIDE_ID_FORMAT);
+            }
         }
         if (!argMultimap.getValue(PREFIX_DATE_OF_BIRTH).orElse("").isEmpty()) {
             bodyDescriptor.setDateOfBirth(ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE_OF_BIRTH).get()));
@@ -253,6 +258,7 @@ public class UpdateCommandParser implements Parser<UpdateCommand> {
 
         Photo photo = ParserUtil.parsePhoto(argMultimap.getValue(PREFIX_PHOTO).orElse(""));
         workerDescriptor.setPhoto(photo);
+
 
         if (!workerDescriptor.isAnyFieldEdited()) {
             throw new ParseException(UpdateCommand.MESSAGE_NOT_EDITED);

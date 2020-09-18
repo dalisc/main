@@ -11,31 +11,40 @@ import javafx.scene.layout.StackPane;
 import seedu.address.MainApp;
 import seedu.address.model.notif.Notif;
 
-//@@ author shaoyi1997
+//@@author shaoyi1997
 /**
  * Represents the notification popover that contains the list of active notifications.
  */
 public class NotificationPopOver {
 
-    private static PopOver notificationPopOver;
+    private PopOver notificationPopOver;
+    private ObservableList<Notif> notifObservableList;
 
     public NotificationPopOver(ObservableList<Notif> notifList) {
         this.notificationPopOver = new PopOver();
+        this.notifObservableList = notifList;
+        setUpPopOver(notifList);
+    }
+
+    /**
+     * Sets up the Ui properties of the PopOver
+     */
+    private void setUpPopOver(ObservableList<Notif> notifList) {
         notificationPopOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
         notificationPopOver.setOpacity(0.95);
         notificationPopOver.setHeaderAlwaysVisible(true);
         notificationPopOver.setCloseButtonEnabled(false);
         notificationPopOver.setTitle("To Contact Police:");
         notificationPopOver.getRoot().getStylesheets().add(MainApp.class.getResource("/view/PopOver.css")
-                .toExternalForm());
+            .toExternalForm());
         notificationPopOver.getRoot().getStyleClass().add("popover");
-        initContent(notifList);
+        initContentsOfPopOver(notifList);
     }
 
     /**
      * Fills the popover with a listview of the notifications.
      */
-    private void initContent(ObservableList<Notif> notifList) {
+    private void initContentsOfPopOver(ObservableList<Notif> notifList) {
         ListView<Notif> notifListView = new ListView<>();
         notifListView.setItems(notifList);
         notifListView.setCellFactory(listView -> new NotifListCell());
@@ -73,4 +82,4 @@ public class NotificationPopOver {
         }
     }
 }
-//@@ author
+//@@author

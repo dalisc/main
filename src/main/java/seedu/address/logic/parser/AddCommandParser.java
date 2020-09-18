@@ -1,5 +1,9 @@
 package seedu.address.logic.parser;
 
+import static seedu.address.commons.core.Messages.MESSAGE_DATEJOINED_BEFORE_DOB;
+import static seedu.address.commons.core.Messages.MESSAGE_DOA_BEFORE_DOB;
+import static seedu.address.commons.core.Messages.MESSAGE_DOA_BEFORE_DOD;
+import static seedu.address.commons.core.Messages.MESSAGE_DOD_BEFORE_DOB;
 import static seedu.address.commons.core.Messages.MESSAGE_INEXISTENT_FRIDGE;
 import static seedu.address.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
@@ -52,7 +56,7 @@ import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.tag.Tag;
 
-//@@ author shaoyi1997
+//@@author shaoyi1997
 /**
  * Parses input arguments and creates a new AddCommand object
  */
@@ -71,7 +75,6 @@ public class AddCommandParser implements Parser<AddCommand> {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
         }
 
-        // todo delete
         if (flag.isEmpty()) {
             Name namePerson = ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
             Phone phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE_NUMBER).get());
@@ -127,6 +130,7 @@ public class AddCommandParser implements Parser<AddCommand> {
      */
     private static Worker parseFieldsWorker(ArgumentMultimap argMultimap) throws ParseException {
         Name name = ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
+        checkIfNameNull(name);
         Sex sex = ParserUtil.parseSex(argMultimap.getValue(PREFIX_SEX).get());
         Date dateOfBirth = ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE_OF_BIRTH).orElse(""));
         PhoneNumber phone = ParserUtil.parsePhoneNumber(argMultimap.getValue(PREFIX_PHONE_NUMBER).orElse(""));
@@ -136,6 +140,10 @@ public class AddCommandParser implements Parser<AddCommand> {
             .orElse(""));
         Photo photo = ParserUtil.parsePhoto(argMultimap.getValue(PREFIX_PHOTO).orElse(""));
 
+        if (dateJoined != null && dateOfBirth != null && dateJoined.before(dateOfBirth)) {
+            throw new ParseException(MESSAGE_DATEJOINED_BEFORE_DOB);
+        }
+
         return new Worker(name, phone, sex, employmentStatus, dateOfBirth, dateJoined, designation, photo);
     }
 
@@ -144,6 +152,7 @@ public class AddCommandParser implements Parser<AddCommand> {
      */
     private static Body parseFieldsBody(ArgumentMultimap argMultimap) throws ParseException {
         Name name = ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
+        checkIfNameNull(name);
         Sex sex = ParserUtil.parseSex(argMultimap.getValue(PREFIX_SEX).get());
         Date dateOfBirth = ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE_OF_BIRTH).orElse(""));
         Date dateOfDeath = ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE_OF_DEATH).orElse(""));
@@ -170,9 +179,26 @@ public class AddCommandParser implements Parser<AddCommand> {
             }
         }
 
+        if (dateOfAdmission != null && dateOfDeath != null && dateOfAdmission.before(dateOfDeath)) {
+            throw new ParseException(MESSAGE_DOA_BEFORE_DOD);
+        } else if (dateOfAdmission != null && dateOfBirth != null && dateOfAdmission.before(dateOfBirth)) {
+            throw new ParseException(MESSAGE_DOA_BEFORE_DOB);
+        } else if (dateOfDeath != null && dateOfBirth != null && dateOfDeath.before(dateOfBirth)) {
+            throw new ParseException(MESSAGE_DOD_BEFORE_DOB);
+        }
         return new Body(dateOfAdmission, name, sex, nric, religion,
                 causeOfDeath, organsForDonation, status, fridgeId, dateOfBirth, dateOfDeath, nameNok, relationship,
                         phoneNok, details);
+    }
+
+    /**
+     * Checks if the given {@code Name name} is a null.
+     * @throws ParseException thrown when name is null.
+     */
+    private static void checkIfNameNull(Name name) throws ParseException {
+        if (name == null) {
+            throw new ParseException(Name.MESSAGE_CONSTRAINTS);
+        }
     }
 
     /**
@@ -188,4 +214,4 @@ public class AddCommandParser implements Parser<AddCommand> {
                                                         PREFIX_TAG, PREFIX_EMAIL, PREFIX_ADDRESS);
     }
 }
-//@@ author
+//@@author

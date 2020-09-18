@@ -1,6 +1,9 @@
 package seedu.address.model;
 
+import static seedu.address.model.entity.body.BodyStatus.CONTACT_POLICE;
+
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import javafx.beans.property.ReadOnlyProperty;
@@ -24,6 +27,8 @@ public interface Model {
     Predicate<Body> PREDICATE_SHOW_ALL_BODIES = unused -> true;
     Predicate<Worker> PREDICATE_SHOW_ALL_WORKERS = unused -> true;
     Predicate<Notif> PREDICATE_SHOW_ALL_NOTIFS = unused -> true;
+    Predicate<Notif> PREDICATE_SHOW_ACTIVE_NOTIFS =
+        unused -> unused.getBody().getBodyStatus().equals(Optional.of(CONTACT_POLICE));
     Predicate<Fridge> PREDICATE_SHOW_ALL_FRIDGES = unused -> true;
 
     /**
@@ -99,6 +104,7 @@ public interface Model {
     /** Returns the AddressBook */
     ReadOnlyAddressBook getAddressBook();
 
+    //@@author shaoyi1997
     /**
      * Returns true if an entity with the same identity as {@code entity} exists in Mortago.
      */
@@ -151,10 +157,17 @@ public interface Model {
      *  Returns the total number of notifications in the system.
      */
     int getNumberOfNotifs();
+    //@@author
+
+    /**
+     *  Returns the total number of active notifications in the system.
+     */
+    int getNumberOfActiveNotifs();
 
     /** Returns an unmodifiable view of the filtered person list */
     ObservableList<Person> getFilteredPersonList();
 
+    //@@author shaoyi1997
     /** Returns an unmodifiable view of the filtered list of workers*/
     ObservableList<Worker> getFilteredWorkerList();
 
@@ -163,12 +176,16 @@ public interface Model {
 
     /** Returns an unmodifiable view of the filtered list of fridges */
     ObservableList<Fridge> getFilteredFridgeList();
+    //@@author
 
     /** Returns an unmodifiable view of the filtered list of entities */
     ObservableList<? extends Entity> getFilteredEntityList(String entityType);
 
     /** Returns an unmodifiable view of the filtered list of notifs */
     ObservableList<Notif> getFilteredNotifList();
+
+    /** Returns an unmodifiable view of the filtered list of active notifs */
+    ObservableList<Notif> getFilteredActiveNotifList();
 
     /**
      * Updates the filter of the filtered person list to filter by the given {@code predicate}.
@@ -195,12 +212,18 @@ public interface Model {
     void updateFilteredNotifList(Predicate<Notif> predicate);
 
     /**
+     * Updates the filter of the filtered active notif list to filter by the given {@code predicate}.
+     * @throws NullPointerException if {@code predicate} is null.
+     */
+    void updateFilteredActiveNotifList(Predicate<Notif> predicate);
+
+    /**
      * Updates the filter of the filtered fridge list to filter by the given {@code predicate}.
      * @throws NullPointerException if {@code predicate} is null.
      */
     void updateFilteredFridgeList(Predicate<Fridge> predicate);
 
-    //@@ shaoyi1997-reused
+    //@@author shaoyi1997-reused
     //Reused from SE-EDU Address Book Level 4
     /**
      * Selected person in the filtered body list.
@@ -219,5 +242,5 @@ public interface Model {
      */
     void setSelectedBody(Body body);
 
-    //@@ shaoyi1997-reused
+    //@@author
 }

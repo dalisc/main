@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.history.CommandHistory;
 import seedu.address.model.AddressBook;
@@ -29,8 +30,11 @@ import seedu.address.model.entity.worker.Worker;
 import seedu.address.model.notif.Notif;
 import seedu.address.model.person.Person;
 import seedu.address.testutil.WorkerBuilder;
+import seedu.address.ui.GuiUnitTest;
 
-public class AddCommandTest {
+//@@author shaoyi1997-reused
+//Reused from SE-EDU Address Book Level 3 with modifications
+public class AddCommandTest extends GuiUnitTest {
 
     @Test
     public void constructor_nullEntity_throwsNullPointerException() {
@@ -44,7 +48,8 @@ public class AddCommandTest {
 
         CommandResult commandResult = new AddCommand(validWorker).execute(modelStub);
 
-        assertEquals(String.format(AddCommand.MESSAGE_SUCCESS, validWorker), commandResult.getFeedbackToUser());
+        assertEquals(String.format(AddCommand.MESSAGE_SUCCESS, "worker",
+                validWorker.getIdNum()), commandResult.getFeedbackToUser());
         assertEquals(Arrays.asList(validWorker), modelStub.entitiesAdded);
     }
 
@@ -201,6 +206,11 @@ public class AddCommandTest {
         }
 
         @Override
+        public int getNumberOfActiveNotifs() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
         public ObservableList<Person> getFilteredPersonList() {
             throw new AssertionError("This method should not be called.");
         }
@@ -232,7 +242,7 @@ public class AddCommandTest {
 
         @Override
         public void updateFilteredFridgeList(Predicate<Fridge> predicate) {
-            throw new AssertionError("This method should not be called.");
+            LogsCenter.getLogger(AddCommandTest.class).info("Updates FilteredList of Fridge");
         }
 
         @Override
@@ -246,12 +256,22 @@ public class AddCommandTest {
         }
 
         @Override
+        public ObservableList<Notif> getFilteredActiveNotifList() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
         public ObservableList<Fridge> getFilteredFridgeList() {
             throw new AssertionError("This method should not be called.");
         }
 
         @Override
         public void updateFilteredNotifList(Predicate<Notif> predicate) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void updateFilteredActiveNotifList(Predicate<Notif> predicate) {
             throw new AssertionError("This method should not be called.");
         }
 
@@ -318,3 +338,4 @@ public class AddCommandTest {
     }
 
 }
+//@@author

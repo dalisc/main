@@ -13,6 +13,7 @@ import org.testfx.api.FxToolkit;
 
 import guitests.guihandles.HelpWindowHandle;
 import guitests.guihandles.StageHandle;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import seedu.address.logic.LogicManager;
@@ -21,7 +22,8 @@ import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
 import seedu.address.storage.StorageManager;
 
-//@@ author shaoyi1997-reused
+//@@author shaoyi1997-reused
+//Reused from SE-EDU Address Book Level 4 with modifications and add on
 /**
  * Contains tests for closing of the {@code MainWindow}.
  */
@@ -52,7 +54,7 @@ public class MainWindowCloseTest extends GuiUnitTest {
     public void close_menuBarExitButton_allWindowsClosed() {
         mainWindowHandle.clickOnMenuExitButton();
         // The application will exit when all windows are closed.
-        assertEquals(Collections.emptyList(), guiRobot.listWindows());
+        Platform.runLater(() -> assertEquals(Collections.emptyList(), guiRobot.listWindows()));
     }
 
     @Test
@@ -61,8 +63,31 @@ public class MainWindowCloseTest extends GuiUnitTest {
         assertTrue(HelpWindowHandle.isWindowPresent());
         mainWindowHandle.closeMainWindowExternally();
         // The application will exit when all windows are closed.
-        assertEquals(Collections.emptyList(), guiRobot.listWindows());
+        Platform.runLater(() -> assertEquals(Collections.emptyList(), guiRobot.listWindows()));
     }
+
+    @Test
+    public void minimise_minimiseButton_windowMinimised() {
+        mainWindowHandle.clickOnMinimiseButton();
+        assertTrue(guiRobot.getStage("Address App").isIconified());
+        Platform.runLater(() -> guiRobot.getStage("Address App").setIconified(false));
+    }
+
+    // tests pass locally but fail in travis
+    /*
+    @Test
+    public void maximise_maximiseRestoreButton_windowMaximised() {
+        mainWindowHandle.clickOnMaximiseButton();
+        assertTrue(guiRobot.getStage("Address App").isMaximized());
+    }
+
+    @Test
+    public void restore_maximiseRestoreButton_windowRestored() {
+        mainWindowHandle.clickOnMaximiseButton();
+        mainWindowHandle.clickOnRestoreButton();
+        assertFalse(guiRobot.getStage("Address App").isMaximized());
+    }
+    */
 
     /**
      * A handle for an empty {@code MainWindow}. The components in {@code MainWindow} are not initialized.
@@ -96,6 +121,27 @@ public class MainWindowCloseTest extends GuiUnitTest {
             guiRobot.clickOn("Help");
             guiRobot.clickOn("F1");
         }
+
+        /**
+         * Minimises the window by clicking on the minimise button.
+         */
+        private void clickOnMinimiseButton() {
+            guiRobot.clickOn("#minimiseButton");
+        }
+
+        /**
+         * Maximises or restores the window by clicking on the maximise button.
+         */
+        private void clickOnMaximiseButton() {
+            guiRobot.clickOn("#maximiseButton");
+        }
+
+        /**
+         * Restores the window by clicking on the restore button.
+         */
+        private void clickOnRestoreButton() {
+            guiRobot.clickOn("#restoreButton");
+        }
     }
 }
-//@@ author
+//@@author

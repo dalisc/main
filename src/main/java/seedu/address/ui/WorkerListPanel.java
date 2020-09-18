@@ -10,6 +10,7 @@ import javafx.scene.layout.Region;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.entity.worker.Worker;
 
+//@@author shaoyi1997
 /**
  * Panel containing the list of workers.
  */
@@ -39,8 +40,9 @@ public class WorkerListPanel extends UiPart<Region> {
                 setText(null);
             } else {
                 setGraphic(new WorkerCard(worker, getIndex() + 1).getRoot());
+                setMaxHeight(Double.MAX_VALUE);
             }
         }
     }
-
 }
+//@@author

@@ -66,6 +66,7 @@ public class LogicManager implements Logic {
         return model.getFilteredPersonList();
     }
 
+    //@@author shaoyi1997
     @Override
     public ObservableList<Worker> getFilteredWorkerList() {
         return model.getFilteredWorkerList();
@@ -85,6 +86,12 @@ public class LogicManager implements Logic {
     public ObservableList<Notif> getFilteredNotifList() {
         return model.getFilteredNotifList();
     }
+    //@@author
+
+    @Override
+    public ObservableList<Notif> getFilteredActiveNotifList() {
+        return model.getFilteredActiveNotifList();
+    }
 
     @Override
     public Path getAddressBookFilePath() {
@@ -101,7 +108,7 @@ public class LogicManager implements Logic {
         model.setGuiSettings(guiSettings);
     }
 
-    //@@ shaoyi1997-reused
+    //@@author shaoyi1997-reused
     //Reused from SE-EDU Address Book Level 4
     @Override
     public ReadOnlyProperty<Body> selectedBodyProperty() {
@@ -112,5 +119,5 @@ public class LogicManager implements Logic {
     public void setSelectedBody(Body body) {
         model.setSelectedBody(body);
     }
-    //@@ shaoyi1997
+    //@@author
 }
